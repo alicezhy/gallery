@@ -27,9 +27,15 @@ import javax.inject.Inject
 class GalleryApplication : Application() {
 
   @Inject lateinit var dataStoreRepository: DataStoreRepository
+  @Inject
+  lateinit var notificationScheduleManager:
+    com.google.ai.edge.gallery.notifications.NotificationScheduleManager
 
   override fun onCreate() {
     super.onCreate()
+    // Initialize the notification schedule manager to load the scheduled notifications from the
+    // disk.
+    notificationScheduleManager.initialize()
 
     // Load saved theme.
     ThemeSettings.themeOverride.value = dataStoreRepository.readTheme()
