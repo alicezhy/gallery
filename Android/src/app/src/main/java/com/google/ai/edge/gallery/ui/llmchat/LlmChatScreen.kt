@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -323,5 +324,19 @@ fun ChatViewWrapper(
     onSystemPromptChanged = onSystemPromptChanged,
     sendMessageTrigger = sendMessageTrigger,
     showAudioPicker = showAudioPicker,
+    onFeedbackSubmitted = { isPositive, comment, selectedChips, agentMessageIndex ->
+      val model = modelManagerViewModel.uiState.value.selectedModel
+      Toast.makeText(context, "Thank you for submitting feedback (test)", Toast.LENGTH_SHORT).show()
+      val currentMessages = viewModel.uiState.value.messagesByModel[model.name]
+      if (
+        currentMessages != null &&
+          agentMessageIndex >= 0 &&
+          agentMessageIndex < currentMessages.size
+      ) {
+        val ratedMessage = currentMessages[agentMessageIndex].clone()
+        ratedMessage.feedbackRating = isPositive
+        viewModel.replaceMessage(model, agentMessageIndex, ratedMessage)
+      }
+    },
   )
 }
